@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual Environment
+.venv/
+
+# Generated images
+data/processed/
+
+# Generated CSV
+data/output/
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
