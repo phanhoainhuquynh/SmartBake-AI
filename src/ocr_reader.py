@@ -10,7 +10,7 @@ def extract_text(image: np.ndarray) -> str:
 
     text = pytesseract.image_to_string(
         image,
-        lang="eng",
+        lang="deu",
     )
 
     return text
