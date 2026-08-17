@@ -1,18 +1,23 @@
 from pathlib import Path
+from src.ocr_reader import extract_text
 
 import cv2
 
 from src.image_preprocessing import (
     convert_to_grayscale,
     load_image,
-    resize_image
+    resize_image,
+    binary_threshold,
+    otsu_threshold,
+    adaptive_threshold,
 )
 
 def main() -> None:
     image_path = Path("data/raw_receipts/IMG_4241.jpg")
-    output_path = Path("data/processed/IMG_4241_gray.jpg")
+    output_dir = Path("data/processed")
+    output_dir.mkdir(parents=True, exist_ok=True)
 
-    image =load_image(image_path)
+    image = load_image(image_path)
     gray_image = convert_to_grayscale(image)
     resized_image = resize_image(gray_image)
 
@@ -21,7 +26,7 @@ def main() -> None:
         None,
         fx=2.0,
         fy=2.0,
-        interpolation=cv2.INTER_NEAREST
+        interpolation=cv2.INTER_NEAREST,
     )
 
     linear_image = cv2.resize(
@@ -29,7 +34,7 @@ def main() -> None:
         None,
         fx=2.0,
         fy=2.0,
-        interpolation=cv2.INTER_LINEAR
+        interpolation=cv2.INTER_LINEAR,
     )
 
     cubic_image = cv2.resize(
@@ -37,8 +42,18 @@ def main() -> None:
         None,
         fx=2.0,
         fy=2.0,
-        interpolation=cv2.INTER_CUBIC
+        interpolation=cv2.INTER_CUBIC,
     )
+
+    binary_image = binary_threshold(resized_image)
+    otsu_image = otsu_threshold(resized_image)
+    adaptive_image = adaptive_threshold(resized_image)
+
+    text = extract_text(otsu_image)
+
+    print("/===== OCR RESULT =====")
+    print(text)
+    print("======================")
 
     print("Original image shape:", image.shape)
     print("Grayscale image shape:", gray_image.shape)
@@ -50,38 +65,46 @@ def main() -> None:
     print("Maximum pixel value:", gray_image.max())
     print("Average brightness:", gray_image.mean())
 
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path = Path("data/processed/IMG_4241_resized.jpg")
-
-    sucess = cv2.imwrite(str(output_path), gray_image)
+    
     cv2.imwrite(
-    str(output_path),
-    resized_image
-)
+        str(output_dir / "IMG_4241_gray.jpg"),
+        gray_image,
+    )
 
-    output_dir = Path("data/processed")
-    output_dir.mkdir(parents=True, exist_ok=True)
+    cv2.imwrite(
+        str(output_dir / "IMG_4241_resized.jpg"),
+        resized_image,
+    )
 
     cv2.imwrite(
         str(output_dir / "IMG_4241_nearest.jpg"),
-        nearest_image
+        nearest_image,
     )
 
     cv2.imwrite(
         str(output_dir / "IMG_4241_linear.jpg"),
-        linear_image
+        linear_image,
     )
 
     cv2.imwrite(
         str(output_dir / "IMG_4241_cubic.jpg"),
-        cubic_image
+        cubic_image,
     )
 
+    cv2.imwrite(
+        str(output_dir / "IMG_4241_binary.jpg"),
+        binary_image,
+    )
 
-    if not sucess:
-        raise RuntimeError(f"Cannot save image to: {output_path}")
+    cv2.imwrite(
+        str(output_dir / "IMG_4241_otsu.jpg"),
+        otsu_image,
+    )
 
-    print (f"Saved grayscale image to: {output_path}")
+    cv2.imwrite(
+        str(output_dir / "IMG_4241_adaptive.jpg"),
+        adaptive_image,
+    )
 
 
 if __name__ == "__main__":

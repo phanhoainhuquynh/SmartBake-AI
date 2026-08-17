@@ -31,3 +31,46 @@ def resize_image(
     )
 
     return resized_image
+
+def binary_threshold(
+        image: np.ndarray,
+        threshold_value: int = 168
+) -> np.ndarray:
+
+    _, thresholded = cv2.threshold(
+        image,
+        threshold_value,
+        255,
+        cv2.THRESH_BINARY
+    )
+
+    return thresholded
+
+def otsu_threshold(image: np.ndarray) -> np.ndarray:
+
+    threshold_value, thresholded = cv2.threshold(
+        image,
+        0,
+        255,
+        cv2.THRESH_BINARY + cv2.THRESH_OTSU
+    )
+
+    print(
+        "Otsu selected threshold",
+        threshold_value
+    )
+
+    return thresholded
+
+def adaptive_threshold(image: np.ndarray) -> np.ndarray:
+
+    thresholded = cv2.adaptiveThreshold(
+        image,
+        255,
+        cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+        cv2.THRESH_BINARY,
+        31,
+        10
+    )
+
+    return thresholded
