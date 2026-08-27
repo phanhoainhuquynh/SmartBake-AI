@@ -1,5 +1,7 @@
 from pathlib import Path
 from src.ocr_reader import extract_text
+from src.receipt_parser import parse_receipt
+
 
 import cv2
 
@@ -50,6 +52,15 @@ def main() -> None:
     adaptive_image = adaptive_threshold(resized_image)
 
     text = extract_text(otsu_image)
+
+    records = parse_receipt(text)
+
+    print("\n===== PARSED RECORDS =====")
+
+    for record in records:
+        print(record)
+
+    print("Number of parsed records", len(records))
 
     print("/===== OCR RESULT =====")
     print(text)
