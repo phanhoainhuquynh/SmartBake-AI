@@ -1,4 +1,11 @@
 from pathlib import Path
+
+from src.image_preprocessing import (
+    load_image,
+    convert_to_grayscale,
+    resize_image,
+    otsu_threshold,
+)
 from src.ocr_reader import extract_text
 from src.receipt_parser import parse_receipt
 from src.product_normalizer import (
@@ -7,133 +14,40 @@ from src.product_normalizer import (
 )
 
 
-import cv2
-
-from src.image_preprocessing import (
-    convert_to_grayscale,
-    load_image,
-    resize_image,
-    binary_threshold,
-    otsu_threshold,
-    adaptive_threshold,
-)
-
 def main() -> None:
+    # 1. Load receipt image
     image_path = Path("data/raw_receipts/IMG_4241.jpg")
-    output_dir = Path("data/processed")
-    output_dir.mkdir(parents=True, exist_ok=True)
-
     image = load_image(image_path)
+
+    # 2. Preprocess image
     gray_image = convert_to_grayscale(image)
     resized_image = resize_image(gray_image)
-
-    nearest_image = cv2.resize(
-        gray_image,
-        None,
-        fx=2.0,
-        fy=2.0,
-        interpolation=cv2.INTER_NEAREST,
-    )
-
-    linear_image = cv2.resize(
-        gray_image,
-        None,
-        fx=2.0,
-        fy=2.0,
-        interpolation=cv2.INTER_LINEAR,
-    )
-
-    cubic_image = cv2.resize(
-        gray_image,
-        None,
-        fx=2.0,
-        fy=2.0,
-        interpolation=cv2.INTER_CUBIC,
-    )
-
-    binary_image = binary_threshold(resized_image)
     otsu_image = otsu_threshold(resized_image)
-    adaptive_image = adaptive_threshold(resized_image)
 
+    # 3. OCR
     text = extract_text(otsu_image)
 
+    # 4. Parse OCR text
     records = parse_receipt(text)
 
+    # 5. Load product catalog
     mapping = load_product_mapping(
         "config/product_mapping.csv"
     )
 
+    # 6. Normalize products
     clean_records = normalize_records(
         records,
         mapping
     )
 
+    # 7. Display result
     print("\n===== NORMALIZED RECORDS =====")
 
     for record in clean_records:
         print(record)
 
-    print("\n===== PARSED RECORDS =====")
-
-    for record in records:
-        print(record)
-
-    print("Number of parsed records", len(records))
-
-    print("/===== OCR RESULT =====")
-    print(text)
-    print("======================")
-
-    print("Original image shape:", image.shape)
-    print("Grayscale image shape:", gray_image.shape)
-    print("Grayscale image shape:", type(gray_image))
-    print("GrayScale data type:", gray_image.dtype)
-    print("Resized:", resized_image.shape)
-
-    print("Minimum pixel value:", gray_image.min())
-    print("Maximum pixel value:", gray_image.max())
-    print("Average brightness:", gray_image.mean())
-
-    
-    cv2.imwrite(
-        str(output_dir / "IMG_4241_gray.jpg"),
-        gray_image,
-    )
-
-    cv2.imwrite(
-        str(output_dir / "IMG_4241_resized.jpg"),
-        resized_image,
-    )
-
-    cv2.imwrite(
-        str(output_dir / "IMG_4241_nearest.jpg"),
-        nearest_image,
-    )
-
-    cv2.imwrite(
-        str(output_dir / "IMG_4241_linear.jpg"),
-        linear_image,
-    )
-
-    cv2.imwrite(
-        str(output_dir / "IMG_4241_cubic.jpg"),
-        cubic_image,
-    )
-
-    cv2.imwrite(
-        str(output_dir / "IMG_4241_binary.jpg"),
-        binary_image,
-    )
-
-    cv2.imwrite(
-        str(output_dir / "IMG_4241_otsu.jpg"),
-        otsu_image,
-    )
-
-    cv2.imwrite(
-        str(output_dir / "IMG_4241_adaptive.jpg"),
-        adaptive_image,
-    )
+    print("\nNumber of records:", len(clean_records))
 
 
 if __name__ == "__main__":
