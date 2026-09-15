@@ -1,6 +1,10 @@
 from pathlib import Path
 from src.ocr_reader import extract_text
 from src.receipt_parser import parse_receipt
+from src.product_normalizer import (
+    load_product_mapping,
+    normalize_records,
+)
 
 
 import cv2
@@ -54,6 +58,20 @@ def main() -> None:
     text = extract_text(otsu_image)
 
     records = parse_receipt(text)
+
+    mapping = load_product_mapping(
+        "config/product_mapping.csv"
+    )
+
+    clean_records = normalize_records(
+        records,
+        mapping
+    )
+
+    print("\n===== NORMALIZED RECORDS =====")
+
+    for record in clean_records:
+        print(record)
 
     print("\n===== PARSED RECORDS =====")
 
