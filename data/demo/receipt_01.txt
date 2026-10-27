@@ -1,0 +1,5 @@
+DEMO - synthetic bakery purchase
+002601 W Croissant Butter 3,18 EUR
+6 St 0,53 EUR/St
+005110 W Käsebrezel 4,00 EUR
+4 St 1,00 EUR/St

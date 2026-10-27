@@ -16,3 +16,12 @@ data/output/
 
 # macOS
 .DS_Store
+# Local receipts and personal data
+data/raw_receipts/
+data/local/
+*.sqlite3
+*.sqlite3-*
+.env
+.env.*
+.streamlit/secrets.toml
+.pytest_cache/

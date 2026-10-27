@@ -47,28 +47,16 @@ def find_closest_product_id(
 
     return closest_id, smallest_distance
 
-
 def normalize_product(
     product: dict,
     mapping: dict[str, str]
 ) -> dict:
 
+    product = dict(product)
     product_id = product["product_id"]
 
-    # Case 1: ID is correct
     if product_id in mapping:
         product["product_name"] = mapping[product_id]
-        return product
-
-    # Case 2: ID does not exist
-    closest_id, distance = find_closest_product_id(
-        product_id,
-        mapping
-    )
-
-    if closest_id is not None and distance <= 1:
-        product["product_id"] = closest_id
-        product["product_name"] = mapping[closest_id]
 
     return product
 

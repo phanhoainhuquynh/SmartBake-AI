@@ -1,0 +1,5 @@
+DEMO - synthetic bakery purchase
+002601 W Croissant Butter 2,12 EUR
+4 St 0,53 EUR/St
+003157 W Vanillestange 2,40 EUR
+St 0,80 EUR/St
