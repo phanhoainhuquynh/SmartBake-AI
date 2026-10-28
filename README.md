@@ -101,12 +101,3 @@ LLM replies may be wrong or omit tool calls. Inspect the tool evidence; no-tool 
 
 Local databases, raw receipts, outputs and secrets are gitignored. Public demos use synthetic text only. An original receipt was present in earlier Git history; excluding it from the current tree does not remove that history. No history rewrite is performed.
 
-## CV description
-
-**SmartBake-AI — Receipt Analysis Agent | Python, SQLite, Ollama, Tesseract, Streamlit**
-
-- Developed a German receipt processing pipeline with OCR, product normalization, human review and SQLite persistence.
-- Implemented an LLM agent that selects validated purchase-analysis tools and exposes receipt-level evidence and execution traces.
-- Added exact monetary calculations, duplicate import detection, CSV/JSON reporting and automated tests for parsing, storage and agent orchestration.
-
-Only claim metrics independently measured. This project does not claim an OCR accuracy percentage or production deployment.
